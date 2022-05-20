@@ -10,16 +10,30 @@ nodejs.
 ## Example
 
 ```typescript
-import { CORS } from "https://deno.land/x/oak_cors@v0.1.1/mod.ts";
-import { Application } from "https://deno.land/x/oak/mod.ts";
+import { Application } from "https://deno.land/x/oak@v10.5.0/mod.ts";
+import { proxy } from "https://deno.land/x/oak_proxy@v0.0.0/mod.ts";
 
 const app = new Application();
-app.use(CORS());
+
+// http://localhost:3000/api?q=deno
+app.use(proxy("/api", {
+  target: "https://cn.bing.com/search",
+  // prependPath: false,
+  changeOrigin: true,
+  pathRewrite: {
+    "^/api": "",
+  },
+}));
+
+// http://localhost:3000/x/oak_nest@v1.9.2
+app.use(proxy("/", {
+  target: "https://deno.land/",
+  changeOrigin: true,
+}));
+
+// app.use(proxy("https://deno.land/"));
 
 // other middleware
 
-await app.listen(":80");
+app.listen({ port: 80 });
 ```
-
-If you use the default options, it will work as both `origin: true` and
-`credentials: true`.

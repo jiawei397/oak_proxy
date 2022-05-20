@@ -1,2 +1,10 @@
 version: 0.0.0
 name: oak_proxy
+scripts:
+  dev:
+    cmd: deno run example.ts
+    desc: run my example.ts file
+    allow:
+      - net
+      - env
+    unstable: true

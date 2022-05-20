@@ -116,6 +116,7 @@ function getMiddleware(key: string, options: ProxyOptions): Middleware {
     const pattern = new URLPattern({ pathname: key });
     const isMatch = pattern.test(ctx.request.url.href);
     if (!isMatch && !pathname.startsWith(key)) {
+      // console.log(`${key} not match ${pathname}`);
       return next();
     }
     if (options.pathRewrite) {
@@ -130,9 +131,10 @@ function getMiddleware(key: string, options: ProxyOptions): Middleware {
     const path = (options.prependPath || isMatch)
       ? join(options.target, pathname)
       : join(options.target, pathname.substring(key.length));
+    // console.log("path", path + originUrl.search);
     // deal with proxy
     await timeoutPromise(
-      dealProxy(path, ctx, options),
+      dealProxy(path + originUrl.search, ctx, options),
       {
         timeoutMsg: "timeout",
         timeout: options.timeout,
