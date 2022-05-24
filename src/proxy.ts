@@ -69,7 +69,7 @@ async function dealProxy(path: string, ctx: Context, options: ProxyOptions) {
 
     const method = ctx.request.method;
     const result = ctx.request.hasBody
-      ? await ctx.request.body({
+      ? ctx.request.body({
         type: "bytes",
       })
       : null;
