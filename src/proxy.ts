@@ -1,4 +1,3 @@
-// deno-lint-ignore-file no-explicit-any
 import { Context, Middleware, Next, ProxyOptions } from "./types.ts";
 
 export function join(...paths: string[]) {
@@ -45,7 +44,7 @@ function timeoutPromise(
   ]);
 }
 
-async function dealProxy(path: string, ctx: any, options: ProxyOptions) {
+async function dealProxy(path: string, ctx: Context, options: ProxyOptions) {
   try {
     const url = new URL(path);
 
@@ -118,6 +117,11 @@ function getMiddleware(key: string, options: ProxyOptions): Middleware {
     if (!isMatch && !pathname.startsWith(key)) {
       // console.log(`${key} not match ${pathname}`);
       return next();
+    }
+    if (options.onFilter) {
+      if (options.onFilter(ctx.request) !== true) {
+        return next();
+      }
     }
     if (options.pathRewrite) {
       if (typeof options.pathRewrite === "function") {

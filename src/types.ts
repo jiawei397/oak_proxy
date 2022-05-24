@@ -4,19 +4,31 @@ export type PathRewriteFunc = (
   request: Request,
 ) => string | Promise<string>;
 
+export type ProxyReq = {
+  headers: Headers;
+  body: any;
+  method: string;
+  signal: AbortSignal;
+};
+
 export interface ProxyOptions {
   target: string;
   prependPath?: boolean;
   pathRewrite?: Record<string, string> | PathRewriteFunc;
   changeOrigin?: boolean;
   headers?: Record<string, string>;
-  onProxyReq?: (proxyReq: Record<string, any>, req: Request) => void;
+  /**
+   * filter whether to deal by proxy
+   * @return only allow returned true to proxy
+   */
+  onFilter?: (req: Request) => boolean | Promise<boolean>;
+  onProxyReq?: (proxyReq: ProxyReq, req: Request) => void;
   onProxyRes?: (
     responseBuffer: ArrayBuffer,
     proxyRes: Response,
-    ctx: any,
+    ctx: Context,
   ) => void;
-  onProxyError?: (error: Error, ctx: any) => void;
+  onProxyError?: (error: Error, ctx: Context) => void;
   proxyTimeout?: number;
   timeout?: number;
 }
